@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1552311926 source:c:\users\jacek\onedrive\ai\l1\z5\main.cpp
+	<iostream>
+	<fstream>
+	<vector>
+	<time.h>
+	<stdlib.h>
+
+1553443351 source:c:\users\jacek\onedrive\ai\l2\z1\main.cpp
+	<iostream>
+	<fstream>
+	<vector>
+	<time.h>
+	<stdlib.h>
+

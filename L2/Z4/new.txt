@@ -1,0 +1,156 @@
+from collections import defaultdict
+from random import shuffle
+import copy
+
+file_in = open('zad4_input.txt', 'r').read().splitlines()
+
+walls = defaultdict(lambda: False)
+goals = set()
+starting_points = set()
+
+row_len = len(file_in)
+col_len = len(file_in[0])
+
+
+for i in range(row_len):
+    for j in range(col_len):
+        moves = file_in[i][j]
+        if moves == '#':
+            walls[(i, j)] = True
+        if moves == 'G':
+            goals.add((i, j))
+        if moves == 'S':
+            starting_points.add((i, j))
+        if moves == 'B':
+            goals.add((i, j))
+            starting_points.add((i, j))
+
+
+original_points = copy.deepcopy(starting_points)
+
+def move(statee, direction):
+    result1 = set()
+    xd = 0
+    yd = 0
+
+    if direction == 'U':
+        xd = -1
+    if direction == 'D':
+        xd = 1
+    if direction == 'L':
+        yd = -1
+    if direction == 'R':
+        yd = 1
+
+    for s in statee:
+        x = s[0]
+        y = s[1]
+        if not walls[(x + xd, y + yd)]:
+            result1.add((x + xd, y + yd))
+        else:
+            result1.add((x, y))
+
+    return result1
+
+
+def solve():
+    while True:
+        global starting_points
+        starting_points = copy.deepcopy(original_points)
+        counter = 0
+        path = ''
+
+        while counter <= 60:
+            temp = []
+            for m in ['U', 'L', 'D', 'R']:
+                new_move = move(starting_points, m)
+                temp.append((new_move, len(new_move), m))
+
+            shuffle(temp)
+            new_move, _, m = min(temp, key=lambda t: t[1])
+            path += m
+            starting_points = new_move
+            counter += 1
+            if len(new_move) <= 2:
+                break
+
+        states = [[starting_points, '']]
+        already_done = set()
+
+        while counter <= 150:
+            min_size = len(min(states, key=lambda t: len(t[0]))[0])
+            temp = [y for y in states if len(y[0]) == min_size]
+
+            if temp != states:
+                states = temp
+                continue
+
+            for [state, history] in states:
+                if (state.difference(goals)) == set():
+                    return path + history
+
+            new_state = []
+            for [state, history] in states:
+                for m in ['U', 'D', 'L', 'R']:
+                    new_move = move(state, m)
+                    if tuple(new_move) not in already_done:
+                        new_state.append([new_move, history + m])
+                        already_done.add(tuple(new_move))
+
+            states = new_state
+            counter += 1
+
+result = ''
+work = True
+
+while work:
+    state1 = copy.deepcopy(starting_points)
+    counter = 0
+    path = ''
+
+    while counter <= 60:
+        moves = []
+        for m in ['U', 'L', 'D', 'R']:
+            state2 = move(state1, m)
+            moves.append((state2, len(state2), m))
+
+        shuffle(moves)
+        state2, _, m = min(moves, key=lambda t: t[1])
+        path += m
+        state1 = state2
+        counter += 1
+        if len(state2) <= 2:
+            break
+
+    states = [[state1, '']]
+    already_done = set()
+
+    while work and counter <= 150:
+        min_size = len(min(states, key=lambda t: len(t[0]))[0])
+        moves = []
+
+        for s in states:
+            if len(s[0]) == min_size:
+                moves.append(s)
+
+        if moves != states:
+            states = moves
+            continue
+
+        for [state, history] in states:
+            if (state.difference(goals)) == set():
+                result = path + history
+                work = False
+
+        new_state = []
+        for [state, history] in states:
+            for m in ['U', 'D', 'L', 'R']:
+                state2 = move(state, m)
+                if tuple(state2) not in already_done:
+                    new_state.append([state2, history + m])
+                    already_done.add(tuple(state2))
+
+        states = new_state
+        counter += 1
+
+open('zad_output.txt', 'w+').write(solve())

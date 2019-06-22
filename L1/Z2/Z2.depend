@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1551555398 source:c:\users\jacek\onedrive\ai\l1\z2\main.cpp
+	<iostream>
+	<vector>
+	<algorithm>
+	<fstream>
+	<windows.h>
+	<map>
+	<cmath>
+	<string>
+

@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1551702974 source:c:\users\jacek\onedrive\ai\l1\z3\main.cpp
+	<iostream>
+	<stdlib.h>
+	<time.h>
+	<algorithm>
+
